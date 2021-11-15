@@ -1,0 +1,94 @@
+{
+  "name": "vscode-end-of-line",
+  "displayName": "End Of Line",
+  "description": "insert a string on end of line.",
+  "version": "0.1.0",
+  "publisher": "SatoshiYamamoto",
+  "author": {
+    "name": "Satoshi Yamamoto",
+    "email": "standard.software.net@gmail.com",
+    "url": "https://www.facebook.com/stndardsoftware"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/standard-software/vscode-end-of-line"
+  },
+  "engines": {
+    "vscode": "^1.62.1"
+  },
+  "categories": [
+    "Other",
+    "Snippets"
+  ],
+  "keywords": [
+    "indent",
+    "reply mark",
+    "template"
+  ],
+  "activationEvents": [
+    "onCommand:EndOfLine.InsertEndLineAllLines",
+    "onCommand:EndOfLine.InsertEndLineOnlyTextLines",
+    "onCommand:EndOfLine.InsertMaxLengthAllLines",
+    "onCommand:EndOfLine.InsertMaxLengthOnlyTextLines",
+    "onCommand:EndOfLine.DeleteEndText"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "EndOfLine.InsertEndLineAllLines",
+        "title": "End Of Line : Insert Input String : End Of Line : All Lines"
+      },
+      {
+        "command": "EndOfLine.InsertEndLineOnlyTextLines",
+        "title": "End Of Line : Insert Input String : End Of Line : Only Text Lines"
+      },
+      {
+        "command": "EndOfLine.InsertMaxLengthAllLines",
+        "title": "End Of Line : Insert Input String : Max Line Length : All Lines"
+      },
+      {
+        "command": "EndOfLine.InsertMaxLengthOnlyTextLines",
+        "title": "End Of Line : Insert Input String : Max Line Length : Only Text Lines"
+      },
+      {
+        "command": "EndOfLine.DeleteEndText",
+        "title": "End Of Line : Delete Input String : End of Text"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "End Of Line",
+      "properties": {
+        "EndOfLine.insertString": {
+          "type": "string",
+          "default": "> ",
+          "description": "Insert String"
+        }
+      },
+      "default": {
+        "insertString": "> "
+      }
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.4",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "14.x",
+    "@types/vscode": "^1.60.0",
+    "@vscode/test-electron": "^1.6.2",
+    "eslint": "^7.32.0",
+    "glob": "^7.1.7",
+    "mocha": "^9.1.1",
+    "typescript": "^4.4.3"
+  },
+  "dependencies": {
+    "graphemesplit": "^2.4.4"
+  }
+}
