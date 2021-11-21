@@ -3,210 +3,279 @@ const split = require('graphemesplit');
 const {
   isUndefined,
   _isLast,
-  _deleteLast,
-  _trimLast,
+  _excludeLast,
+  _trimLast,_trim,
 } = require('./parts/parts.js')
+
+const textLength = (str) => {
+  let result = 0;
+  for(const char of split(str)){
+    const codePoint = char.codePointAt(0);
+    const len = 0x00 <= codePoint && codePoint <= 0xFF ? 1 : 2;
+    result += len;
+  }
+  return result;
+}
+
+const getMaxLength = (editor) => {
+  let maxLength = 0;
+  for (let { start, end } of editor.selections) {
+    for (let i = start.line; i <= end.line; i += 1) {
+      const line = editor.document.lineAt(i).text;
+      if (_trim(line) === '') { continue; }
+      const length = textLength(line);
+      if (maxLength < length) {
+        maxLength = length
+      }
+    }
+  };
+  return maxLength;
+}
 
 function activate(context) {
 
-  const extensionMain = (commandName) => {
+  context.subscriptions.push(
+    vscode.commands.registerCommand(`EndOfLine.Input`, () => {
 
-    const editor = vscode.window.activeTextEditor;
-    if ( !editor ) {
-      vscode.window.showInformationMessage(`No editor is active`);
-      return;
-    }
-
-    vscode.window.showInputBox({
-      ignoreFocusOut: true,
-      placeHolder: ``,
-      prompt: `Input Insert/Delete String`,
-      value: vscode.workspace.getConfiguration(`EndOfLine`).get(`insertString`),
-    }).then(inputString => {
-      if (isUndefined(inputString)) {
-        return;
+      const inputCommands = {
+        InsertEndLineAllLines:        { label: `Insert | All Lines`, description: `` },
+        InsertEndLineOnlyTextLines:   { label: `Insert | Only Text Lines`, description: `` },
+        InsertMaxLengthAllLines:      { label: `Insert | All Lines | Max Line Length`, description: `` },
+        InsertMaxLengthOnlyTextLines: { label: `Insert | Only Text Lines | Max Line Length`, description: `` },
+        DeleteEndText:                { label: `Delete | End Of Text`, description: `` },
       }
-      if (!vscode.window.activeTextEditor) {
-        vscode.window.showInformationMessage( `No editor is active` );
-        return;
-      }
-      editor.edit(ed => {
 
-        const editorSelectionsLoop = (func) => {
-          editor.selections.forEach(select => {
-            const range = new vscode.Range(
-              select.start.line, 0,
-              select.end.line,
-              select.end.character,
-            );
-            const text = editor.document.getText(range);
-            func(range, text);
-          });
-        }
+      vscode.window.showQuickPick(Object.values(inputCommands), {
+        canPickMany: false,
+        placeHolder: "Select Command | End Of Line | Input",
+      }).then((item) => {
+        if (!item) { return; }
 
-        const editorSelectionsLoopUnsupportTab = (func) => {
-          let includeTabFlag = false;
-          editor.selections.forEach(select => {
-            const range = new vscode.Range(
-              select.start.line, 0, select.end.line, select.end.character
-            );
-            const text = editor.document.getText(range);
-            if (text.includes(`\t`)) {
-              includeTabFlag = true
-            }
-            func(range, text);
-          });
-          if (includeTabFlag) {
-            vscode.window.showInformationMessage( 'This feature of Insert String Each Line Extension does not support tabs.');
+        let _commandName = '';
+        for (let [key, value] of Object.entries(inputCommands)) {
+          if (item === value) {
+            _commandName = key;
+            break;
           }
         }
+        if (_commandName === '') { return; }
+        const commandName = _commandName;
 
-        const textLength = (str) => {
-          let result = 0;
-          for(const char of split(str)){
-            const codePoint = char.codePointAt(0);
-            const len = 0x00 <= codePoint && codePoint <= 0xFF ? 1 : 2;
-            result += len;
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+          vscode.window.showInformationMessage(`No editor is active`);
+          return;
+        }
+
+        vscode.window.showInputBox({
+          ignoreFocusOut: true,
+          placeHolder: ``,
+          prompt: `Input String`,
+          value: vscode.workspace.getConfiguration(`EndOfLine`).get(`insertString`),
+        }).then(inputString => {
+          if (isUndefined(inputString)) {
+            return;
           }
-          return result;
-        }
-
-        const getMaxLength = (lines) => {
-          let maxLength = 0;
-          for (let i = 0; i < lines.length; i += 1) {
-            if (lines[i].trim() === '') { continue; }
-            const length = textLength(_trimLast(lines[i], ['\r']))
-            if (maxLength < length) {
-              maxLength = length
-            }
+          const editor = vscode.window.activeTextEditor;
+          if (!editor) {
+            vscode.window.showInformationMessage( `No editor is active` );
+            return;
           }
-          return maxLength;
-        }
+          editor.edit(editBuilder => {
 
-        const textLoopAllLines = (text, func, linesFunc = () => {}) => {
-          const lines = text.split(`\n`);
-          const linesFuncResult = linesFunc(lines);
-          for (let i = 0; i < lines.length; i += 1) {
-            func(lines, i, linesFuncResult);
-          };
-          return lines.join('\n');
-        }
+            switch (commandName) {
 
-        const textLoopOnlyTextLines = (text, func, linesFunc = () => {}) => {
-          const lines = text.split(`\n`);
-          const linesFuncResult = linesFunc(lines);
-          for (let i = 0; i < lines.length; i += 1) {
-            if (lines[i].trim() === '') { continue; }
-            func(lines, i, linesFuncResult);
-          };
-          return lines.join('\n');
-        }
-
-        switch (commandName) {
-
-          case `InsertEndLineAllLines`:
-            editorSelectionsLoopUnsupportTab((range, text) => {
-              text = textLoopAllLines(text, (lines, i) => {
-                const lastLineBreak = _isLast(lines[i], '\r') ? '\r' : '';
-                const trimLine = _trimLast(lines[i], ['\r']);
-                lines[i] = trimLine
-                  + inputString + lastLineBreak;
-              })
-              ed.replace(range, text);
-            })
-            break;
-
-          case `InsertEndLineOnlyTextLines`:
-            editorSelectionsLoopUnsupportTab((range, text) => {
-              text = textLoopOnlyTextLines(text, (lines, i) => {
-                const lastLineBreak = _isLast(lines[i], '\r') ? '\r' : '';
-                const trimLine = _trimLast(lines[i], ['\r']);
-                lines[i] = trimLine
-                  + inputString + lastLineBreak;
-              })
-              ed.replace(range, text);
-            })
-            break;
-
-          case `InsertMaxLengthAllLines`:
-            editorSelectionsLoopUnsupportTab((range, text) => {
-              text = textLoopAllLines(text, (lines, i, maxLength) => {
-                const lastLineBreak = _isLast(lines[i], '\r') ? '\r' : '';
-                const trimLine = _trimLast(lines[i], ['\r']);
-                lines[i] = trimLine
-                  + ' '.repeat(maxLength - textLength(trimLine))
-                  + inputString + lastLineBreak;
-              }, getMaxLength)
-              ed.replace(range, text);
-            })
-            break;
-
-          case `InsertMaxLengthOnlyTextLines`:
-            editorSelectionsLoopUnsupportTab((range, text) => {
-              text = textLoopOnlyTextLines(text, (lines, i, maxLength) => {
-                const lastLineBreak = _isLast(lines[i], '\r') ? '\r' : '';
-                const trimLine = _trimLast(lines[i], ['\r']);
-                lines[i] = trimLine
-                  + ' '.repeat(maxLength - textLength(trimLine))
-                  + inputString + lastLineBreak;
-              }, getMaxLength)
-              ed.replace(range, text);
-            })
-            break;
-
-          case `DeleteEndText`:
-            editorSelectionsLoop((range, text) => {
-              text = textLoopOnlyTextLines(text, (lines, i) => {
-                const lastLineBreak = _isLast(lines[i], '\r') ? '\r' : '';
-                const trimLine = _trimLast(lines[i], [' ', '\t', '\r']);
-                const trimLastInput = _trimLast(inputString, [' ']);
-                if (_isLast(trimLine, trimLastInput)) {
-                  lines[i] = _trimLast(_deleteLast(trimLine, trimLastInput.length), [' ', '\t']) + lastLineBreak;
+            case `InsertEndLineAllLines`: {
+              for (let { start, end } of editor.selections) {
+                for (let i = start.line; i <= end.line; i += 1) {
+                  const line = editor.document.lineAt(i).text;
+                  editBuilder.insert(new vscode.Position(i, line.length), inputString);
                 }
-              })
-              ed.replace(range, text);
-            })
+              };
+            } break;
+
+            case `InsertEndLineOnlyTextLines`: {
+              for (let { start, end } of editor.selections) {
+                for (let i = start.line; i <= end.line; i += 1) {
+                  const line = editor.document.lineAt(i).text;
+                  if (_trim(line) === '') { continue; }
+                  editBuilder.insert(new vscode.Position(i, line.length), inputString);
+                }
+              };
+            } break;
+
+            case `InsertMaxLengthAllLines`: {
+              const maxLength = getMaxLength(editor);
+              for (let { start, end } of editor.selections) {
+                for (let i = start.line; i <= end.line; i += 1) {
+                  const line = editor.document.lineAt(i).text;
+                  editBuilder.insert(
+                    new vscode.Position(i, line.length),
+                    ' '.repeat(maxLength - textLength(line)) + inputString
+                  );
+                }
+              };
+            } break;
+
+            case `InsertMaxLengthOnlyTextLines`: {
+              const maxLength = getMaxLength(editor);
+              for (let { start, end } of editor.selections) {
+                for (let i = start.line; i <= end.line; i += 1) {
+                  const line = editor.document.lineAt(i).text;
+                  if (_trim(line) === '') { continue; }
+                  editBuilder.insert(
+                    new vscode.Position(i, line.length),
+                    ' '.repeat(maxLength - textLength(line)) + inputString
+                  );
+                }
+              };
+            } break;
+
+            case `DeleteEndText`: {
+              for (let { start, end } of editor.selections) {
+                for (let i = start.line; i <= end.line; i += 1) {
+                  const line = editor.document.lineAt(i).text;
+                  const trimLine = _trimLast(line, [' ', '\t']);
+                  const trimLastInput = _trimLast(inputString, [' ']);
+                  // console.log({trimLine,trimFirstInput}, _isLast(trimLine, trimFirstInput))
+                  if (trimLastInput === '') {
+                    editBuilder.delete(
+                      new vscode.Range(
+                        i, trimLine.length,
+                        i, line.length
+                      )
+                    );
+                  } else if (_isLast(trimLine, trimLastInput)) {
+                    const trimLineExcludeLast = _trimLast(
+                      _excludeLast(trimLine, trimLastInput),
+                      [' ', '\t']
+                    )
+                    editBuilder.delete(
+                      new vscode.Range(
+                        i, trimLineExcludeLast.length,
+                        i, line.length
+                      )
+                    );
+                  }
+                }
+              };
+            } break;
+
+            default: {
+              throw new Error(`EndOfLine Input`);
+            }
+            }
+          });
+        });
+
+      });
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(`EndOfLine.SelectEdit`, () => {
+
+      const selectEditCommands = {
+        EndLineAllLines:        { label: `Select Edit | All Lines`, description: `` },
+        EndLineOnlyTextLines:   { label: `Select Edit | Only Text Lines`, description: `` },
+        MaxLengthAllLines:      { label: `Select Edit | All Lines | Max Line Length`, description: `` },
+        MaxLengthOnlyTextLines: { label: `Select Edit | Only Text Lines | Max Line Length`, description: `` },
+      }
+
+      vscode.window.showQuickPick(Object.values(selectEditCommands), {
+        canPickMany: false,
+        placeHolder: "Select Command | End Of Line | Select Edit",
+      }).then((item) => {
+        if (!item) { return; }
+
+        let _commandName = '';
+        for (let [key, value] of Object.entries(selectEditCommands)) {
+          if (item === value) {
+            _commandName = key;
             break;
-
-          default:
-            new Error(`EndOfLine extensionMain`);
+          }
         }
-      } );
-    } );
-  }
+        if (_commandName === '') { return; }
+        const commandName = _commandName;
 
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      `EndOfLine.InsertEndLineAllLines`, () => {
-      extensionMain(`InsertEndLineAllLines`);
-    })
-  );
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+          vscode.window.showInformationMessage(`No editor is active`);
+          return;
+        }
+        editor.edit(editBuilder => {
+          switch (commandName) {
 
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      `EndOfLine.InsertEndLineOnlyTextLines`, () => {
-      extensionMain(`InsertEndLineOnlyTextLines`);
-    })
-  );
+          case `EndLineAllLines`: {
+            const runAfterSelections = [];
+            for (let { start, end } of editor.selections) {
+              for (let i = start.line; i <= end.line; i += 1) {
+                const line = editor.document.lineAt(i).text;
+                runAfterSelections.push(
+                  new vscode.Selection(i, line.length, i, line.length)
+                )
+              }
+            };
+            editor.selections = runAfterSelections;
+          } break;
 
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      `EndOfLine.InsertMaxLengthAllLines`, () => {
-      extensionMain(`InsertMaxLengthAllLines`);
-    })
-  );
+          case `EndLineOnlyTextLines`: {
+            const runAfterSelections = [];
+            for (let { start, end } of editor.selections) {
+              for (let i = start.line; i <= end.line; i += 1) {
+                const line = editor.document.lineAt(i).text;
+                if (_trim(line) === '') { continue; }
+                runAfterSelections.push(
+                  new vscode.Selection(i, line.length, i, line.length)
+                )
+              }
+            };
+            editor.selections = runAfterSelections;
+          } break;
 
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      `EndOfLine.InsertMaxLengthOnlyTextLines`, () => {
-      extensionMain(`InsertMaxLengthOnlyTextLines`);
-    })
-  );
+          case `MaxLengthAllLines`: {
+            const runAfterSelections = [];
+            const maxLength = getMaxLength(editor);
+            for (let { start, end } of editor.selections) {
+              for (let i = start.line; i <= end.line; i += 1) {
+                const line = editor.document.lineAt(i).text;
+                editBuilder.insert(
+                  new vscode.Position(i, line.length),
+                  ' '.repeat(maxLength - textLength(line))
+                );
+                runAfterSelections.push(
+                  new vscode.Selection(i, maxLength, i, maxLength)
+                )
+              }
+            };
+            editor.selections = runAfterSelections;
+          } break;
 
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      `EndOfLine.DeleteEndText`, () => {
-      extensionMain(`DeleteEndText`);
+          case `MaxLengthOnlyTextLines`: {
+            const runAfterSelections = [];
+            const maxLength = getMaxLength(editor);
+            for (let { start, end } of editor.selections) {
+              for (let i = start.line; i <= end.line; i += 1) {
+                const line = editor.document.lineAt(i).text;
+                if (_trim(line) === '') { continue; }
+                editBuilder.insert(
+                  new vscode.Position(i, line.length),
+                  ' '.repeat(maxLength - textLength(line))
+                );
+                runAfterSelections.push(
+                  new vscode.Selection(i, maxLength, i, maxLength)
+                )
+              }
+            };
+            editor.selections = runAfterSelections;
+          } break;
+
+          default: {
+            throw new Error(`BeginOfLine Select Edit`);
+          }
+          }
+        });
+      });
     })
   );
 
