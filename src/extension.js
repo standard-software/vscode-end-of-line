@@ -32,6 +32,20 @@ const getMaxLength = (editor) => {
   return maxLength;
 };
 
+const commandQuickPick = (commandsArray, placeHolder) => {
+  const commands = commandsArray.map(c => ({label:c[0], description:c[1], func:c[2]}));
+  vscode.window.showQuickPick(
+    commands.map(({label, description}) => ({label, description})),
+    {
+      canPickMany: false,
+      placeHolder
+    }
+  ).then((item) => {
+    if (!item) { return; }
+    commands.find(({label}) => label === item.label).func();
+  });
+};
+
 function activate(context) {
 
   const registerCommand = (commandName, func) => {
@@ -42,119 +56,31 @@ function activate(context) {
     );
   };
 
-  registerCommand(`EndOfLine.SelectFunction`, () => {
+  const mark = vscode.workspace.getConfiguration(`EndOfLine`).get(`subMenuMark`);
 
-    let select1Space, select1Input, select1Select;
-    const commands = [
-      [`Space`,         ``, () => { select1Space(); }],
-      [`Input`,         ``, () => { select1Input(); }],
-      [`Select Cursor`, ``, () => { select1Select(); }],
-    ].map(c => ({label:c[0], description:c[1], func:c[2]}));
-    vscode.window.showQuickPick(
-      commands.map(({label, description}) => ({label, description})),
-      {
-        canPickMany: false,
-        placeHolder: `End Of Line | Select Function`
-      }
-    ).then((item) => {
-      if (!item) { return; }
-      commands.find(({label}) => label === item.label).func();
-    });
-
-    select1Space = () => {
-      const commands = [
-        [`Fill Space`,  ``, () => { mainSpace(`FillSpace`); }],
-        [`Trim End`,    ``, () => { mainSpace(`TrimEnd`); }],
-      ].map(c => ({label:c[0], description:c[1], func:c[2]}));
-      vscode.window.showQuickPick(
-        commands.map(({label, description}) => ({label, description})),
-        {
-          canPickMany: false,
-          placeHolder: `End Of Line | Space`,
-        }
-      ).then((item) => {
-        if (!item) { return; }
-        commands.find(({label}) => label === item.label).func();
-      });
-    };
-
-    select1Input = () => {
-      let select2InsertEndOfLine, select2InsertMaxLength, select2DeleteEndOfText;
-      const commands = [
-        [`Insert End Of Line`,    ``, () => { select2InsertEndOfLine(); }],
-        [`Insert Max Length`,     ``, () => { select2InsertMaxLength(); }],
-        [`Delete End Of Text`,    ``, () => { select2DeleteEndOfText(); }],
-      ].map(c => ({label:c[0], description:c[1], func:c[2]}));
-      vscode.window.showQuickPick(
-        commands.map(({label, description}) => ({label, description})),
-        {
-          canPickMany: false,
-          placeHolder: `End Of Line | Input`,
-        }
-      ).then((item) => {
-        if (!item) { return; }
-        commands.find(({label}) => label === item.label).func();
-      });
-
-      select2InsertEndOfLine = () => {
-        const commands = [
-          [`All Lines`,         ``, () => { mainInput(`InsertEndLineAll`); }],
-          [`Text Lines`,        ``, () => { mainInput(`InsertEndLineText`); }],
-        ].map(c => ({label:c[0], description:c[1], func:c[2]}));
-        vscode.window.showQuickPick(
-          commands.map(({label, description}) => ({label, description})),
-          {
-            canPickMany: false,
-            placeHolder: `End Of Line | Input | Insert End Of Line`,
-          }
-        ).then((item) => {
-          if (!item) { return; }
-          commands.find(({label}) => label === item.label).func();
-        });
-      };
-
-      select2InsertMaxLength = () => {
-        const commands = [
-          [`All Lines`,   ``, () => { mainInput(`InsertMaxLengthAll`); }],
-          [`Text Lines`,  ``, () => { mainInput(`InsertMaxLengthText`); }],
-        ].map(c => ({label:c[0], description:c[1], func:c[2]}));
-        vscode.window.showQuickPick(
-          commands.map(({label, description}) => ({label, description})),
-          {
-            canPickMany: false,
-            placeHolder: `End Of Line | Input | Insert Max Length`,
-          }
-        ).then((item) => {
-          if (!item) { return; }
-          commands.find(({label}) => label === item.label).func();
-        });
-      };
-
-      select2DeleteEndOfText = () => {
-        mainInput(`DeleteEndText`);
-      };
-    };
-
-    select1Select = () => {
-      const commands = [
-        [`All Lines`,               ``, () => { mainSelect(`SelectEndLineAll`); }],
-        [`Text Lines`,              ``, () => { mainSelect(`SelectEndLineText`); }],
-        [`Max Length | All Lines`,  ``, () => { mainSelect(`SelectMaxLengthAll`); }],
-        [`Max Length | Text Lines`, ``, () => { mainSelect(`SelectMaxLengthText`); }],
-      ].map(c => ({label:c[0], description:c[1], func:c[2]}));
-      vscode.window.showQuickPick(
-        commands.map(({label, description}) => ({label, description})),
-        {
-          canPickMany: false,
-          placeHolder: `End Of Line | Select Cursor`,
-        }
-      ).then((item) => {
-        if (!item) { return; }
-        commands.find(({label}) => label === item.label).func();
-      });
-    };
-
-  });
+  registerCommand(`EndOfLine.SelectFunction`, () => { commandQuickPick([
+    [`Space`,                     `${mark}`,  () => { commandQuickPick([
+      [`Fill Space`,              ``,         () => { mainSpace(`FillSpace`); }],
+      [`Trim End`,                ``,         () => { mainSpace(`TrimEnd`); }],
+    ], `End Of Line | Space`); }],
+    [`Input`,                     `${mark}`,  () => { commandQuickPick([
+      [`Insert End Of Line`,      `${mark}`,  () => { commandQuickPick([
+        [`All Lines`,             ``,         () => { mainInput(`InsertEndLineAll`); }],
+        [`Text Lines`,            ``,         () => { mainInput(`InsertEndLineText`); }],
+      ], `End Of Line | Input | Insert End Of Line`); }],
+      [`Insert Max Length`,       `${mark}`,  () => { commandQuickPick([
+        [`All Lines`,             ``,         () => { mainInput(`InsertMaxLengthAll`); }],
+        [`Text Lines`,            ``,         () => { mainInput(`InsertMaxLengthText`); }],
+      ], `End Of Line | Input | Insert Max Length`); }],
+      [`Delete End Of Text`,      ``,         () => { mainInput(`DeleteEndText`); }],
+    ], `End Of Line | Input`); }],
+    [`Select Cursor`,             `${mark}`,  () => { commandQuickPick([
+      [`All Lines`,               ``,         () => { mainSelect(`SelectEndLineAll`); }],
+      [`Text Lines`,              ``,         () => { mainSelect(`SelectEndLineText`); }],
+      [`Max Length | All Lines`,  ``,         () => { mainSelect(`SelectMaxLengthAll`); }],
+      [`Max Length | Text Lines`, ``,         () => { mainSelect(`SelectMaxLengthText`); }],
+    ], `End Of Line | Select Cursor`); }],
+  ], `End Of Line | Select Function`); });
 
   const mainSpace = (commandName) => {
     const editor = vscode.window.activeTextEditor;

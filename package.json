@@ -99,14 +99,15 @@
       "type": "object",
       "title": "End Of Line",
       "properties": {
+        "EndOfLine.subMenuMark": {
+          "type": "string",
+          "default": "▸"
+        },
         "EndOfLine.insertString": {
           "type": "string",
           "default": "> ",
           "description": "Insert String"
         }
-      },
-      "default": {
-        "insertString": "> "
       }
     }
   },

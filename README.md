@@ -59,6 +59,18 @@ Or Select Function
 
 Max Line Length = End of line at maximum length of selection.  
 
+## Setting
+
+settings.json
+
+```json
+{
+  "EndOfLine.subMenuMark": ">>",
+  "EndOfLine.insertString": "> ",
+  :
+}
+```
+
 ## License
 
 Released under the [MIT License][license].
@@ -73,6 +85,14 @@ Released under the [MIT License][license].
 [license]: https://github.com/standard-software/vscode-end-of-line/blob/master/LICENSE
 
 ## Version
+
+### 2.1.0
+2022/04/18(Mon)
+- Sub Menu Mark "▸"
+  - Changeable in the settings
+  - show it in the description
+- refactoring
+- Update README add setting
 
 ### 2.0.0
 2021/11/24(Wed)
