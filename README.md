@@ -89,6 +89,11 @@ Released under the [MIT License][license].
 
 ## Version
 
+### 2.2.1
+2022/05/03 Tue
+- Remove unnecessary npm packages
+- set vscode debug config
+
 ### 2.2.0
 2022/05/03 Tue
 - Update README
