@@ -2,7 +2,8 @@
   "name": "vscode-end-of-line",
   "displayName": "End Of Line",
   "description": "Extension to insert, select, and convert at the end of a line.",
-  "version": "2.1.0",
+  "version": "2.2.0",
+	"icon": "vscode-end-of-line_icon.png",
   "publisher": "SatoshiYamamoto",
   "author": {
     "name": "Satoshi Yamamoto",
@@ -22,9 +23,9 @@
     "Snippets"
   ],
   "keywords": [
-    "indent",
-    "reply mark",
-    "template"
+    "end of line",
+    "space",
+    "trim"
   ],
   "activationEvents": [
     "onCommand:EndOfLine.FillSpace",
@@ -113,7 +114,7 @@
   },
   "scripts": {
     "lint": "eslint --fix ./src",
-    "pack": "vsce package && code --install-extension vscode-end-of-line-2.1.0.vsix",
+    "pack": "vsce package && code --install-extension vscode-end-of-line-2.2.0.vsix",
     "": ""
   },
   "devDependencies": {
