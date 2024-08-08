@@ -56,7 +56,7 @@ function activate(context) {
     );
   };
 
-  const mark = vscode.workspace.getConfiguration(`EndOfLine`).get(`subMenuMark`);
+  const mark = `>>`;
 
   registerCommand(`EndOfLine.SelectFunction`, () => { commandQuickPick([
     [`Space`,                     `${mark}`,  () => { commandQuickPick([

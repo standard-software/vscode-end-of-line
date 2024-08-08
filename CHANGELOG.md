@@ -3,6 +3,7 @@
 ## [2.3.0] - 2024/08/08 Thu
 - update README
 - add CHANGELOG.md
+- Delete Setting EndOfLine.subMenuMark
 
 ## [2.2.1] - 2022/05/03 Tue
 - Remove unnecessary npm packages

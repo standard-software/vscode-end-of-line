@@ -28,6 +28,18 @@
     "trim",
     "fill"
   ],
+  "scripts": {
+    "lint": "eslint --fix ./src",
+    "pack": "vsce package && code --install-extension vscode-end-of-line-2.2.1.vsix",
+    "": ""
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "vsce": "^2.7.0"
+  },
+  "dependencies": {
+    "graphemesplit": "^2.4.4"
+  },
   "activationEvents": [],
   "main": "./src/extension.js",
   "contributes": {
@@ -85,10 +97,6 @@
       "type": "object",
       "title": "End Of Line",
       "properties": {
-        "EndOfLine.subMenuMark": {
-          "type": "string",
-          "default": "▸"
-        },
         "EndOfLine.insertString": {
           "type": "string",
           "default": "> ",
@@ -96,17 +104,5 @@
         }
       }
     }
-  },
-  "scripts": {
-    "lint": "eslint --fix ./src",
-    "pack": "vsce package && code --install-extension vscode-end-of-line-2.2.1.vsix",
-    "": ""
-  },
-  "devDependencies": {
-    "eslint": "^7.32.0",
-    "vsce": "^2.7.0"
-  },
-  "dependencies": {
-    "graphemesplit": "^2.4.4"
   }
 }

@@ -41,7 +41,7 @@ Following commands are available:
 Or Select Function
 
 ```
-- End Of Line : Select Function >>
+- End Of Line : Select Function ... >>
   - Space >>
     - Fill Space
     - Trim End
@@ -68,9 +68,7 @@ settings.json
 
 ```json
 {
-  "EndOfLine.subMenuMark": ">>",
   "EndOfLine.insertString": "> ",
-  :
 }
 ```
 
