@@ -61,11 +61,11 @@
         "title": "End Of Line : Input : Insert End Of Line : Text Lines"
       },
       {
-        "command": "EndOfLine.InsertMinIndentAll",
+        "command": "EndOfLine.InsertMaxLengthAll",
         "title": "End Of Line : Input : Insert Max Length : All Lines"
       },
       {
-        "command": "EndOfLine.InsertMinIndentText",
+        "command": "EndOfLine.InsertMaxLengthText",
         "title": "End Of Line : Input : Insert Max Length : Text Lines"
       },
       {

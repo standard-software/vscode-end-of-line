@@ -4,6 +4,9 @@
 - update README
 - add CHANGELOG.md
 - Delete Setting EndOfLine.subMenuMark
+- fix bug
+  - End Of Line : Insert Max Length : All Lines
+  - End Of Line : Insert Max Length : Text Lines
 
 ## [2.2.1] - 2022/05/03 Tue
 - Remove unnecessary npm packages
