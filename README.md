@@ -1,9 +1,9 @@
 # VSCode extension - End Of Line
 
-[![Version][version-badge]][marketplace]
-[![Ratings][ratings-badge]][marketplace-ratings]
-[![Installs][installs-badge]][marketplace]
-[![License][license-badge]][license]
+[![](https://vsmarketplacebadges.dev/version-short/SatoshiYamamoto.vscode-end-of-line.png)](https://marketplace.visualstudio.com/items?itemName=SatoshiYamamoto.vscode-end-of-line)
+[![](https://vsmarketplacebadges.dev/installs-short/SatoshiYamamoto.vscode-end-of-line.png)](https://marketplace.visualstudio.com/items?itemName=SatoshiYamamoto.vscode-end-of-line)
+[![](https://vsmarketplacebadges.dev/rating-short/SatoshiYamamoto.vscode-end-of-line.png)](https://marketplace.visualstudio.com/items?itemName=SatoshiYamamoto.vscode-end-of-line)
+[![](https://img.shields.io/github/license/standard-software/vscode-end-of-line.png)](https://github.com/standard-software/vscode-end-of-line/blob/main/LICENSE)
 
 This extension has the following functions
 - Fill Space end of line and Trim End.
@@ -78,11 +78,7 @@ settings.json
 
 Released under the [MIT License][license].
 
-[version-badge]: https://vsmarketplacebadge.apphb.com/version/SatoshiYamamoto.vscode-end-of-line.svg
-[ratings-badge]: https://vsmarketplacebadge.apphb.com/rating/SatoshiYamamoto.vscode-end-of-line.svg
-[installs-badge]: https://vsmarketplacebadge.apphb.com/installs/SatoshiYamamoto.vscode-end-of-line.svg
-[license-badge]: https://img.shields.io/github/license/standard-software/vscode-end-of-line.svg
+## Change log
 
-[marketplace]: https://marketplace.visualstudio.com/items?itemName=SatoshiYamamoto.vscode-end-of-line
-[marketplace-ratings]: https://marketplace.visualstudio.com/items?itemName=SatoshiYamamoto.vscode-end-of-line#review-details
-[license]: https://github.com/standard-software/vscode-end-of-line/blob/master/LICENSE
+[./CHANGELOG.md](./CHANGELOG.md)
+
