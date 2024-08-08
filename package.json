@@ -25,75 +25,60 @@
   "keywords": [
     "end of line",
     "space",
-    "trim"
+    "trim",
+    "fill"
   ],
-  "activationEvents": [
-    "onCommand:EndOfLine.FillSpace",
-    "onCommand:EndOfLine.TrimEnd",
-
-    "onCommand:EndOfLine.InsertEndLineAll",
-    "onCommand:EndOfLine.InsertEndLineText",
-    "onCommand:EndOfLine.InsertMaxLengthAll",
-    "onCommand:EndOfLine.InsertMaxLengthText",
-    "onCommand:EndOfLine.DeleteEndText",
-
-    "onCommand:EndOfLine.SelectEndLineAll",
-    "onCommand:EndOfLine.SelectEndLineText",
-    "onCommand:EndOfLine.SelectMaxLengthAll",
-    "onCommand:EndOfLine.SelectMaxLengthText",
-
-    "onCommand:EndOfLine.SelectFunction"
-  ],
+  "activationEvents": [],
   "main": "./src/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "EndOfLine.FillSpace",
-        "title": "End Of Line | Space | Fill Space"
+        "title": "End Of Line : Space : Fill Space"
       },
       {
         "command": "EndOfLine.TrimEnd",
-        "title": "End Of Line | Space | Trim End"
+        "title": "End Of Line : Space : Trim End"
       },
       {
         "command": "EndOfLine.InsertEndLineAll",
-        "title": "End Of Line | Input | Insert End Of Line | All Lines"
+        "title": "End Of Line : Input : Insert End Of Line : All Lines"
       },
       {
         "command": "EndOfLine.InsertEndLineText",
-        "title": "End Of Line | Input | Insert End Of Line | Text Lines"
+        "title": "End Of Line : Input : Insert End Of Line : Text Lines"
       },
       {
         "command": "EndOfLine.InsertMinIndentAll",
-        "title": "End Of Line | Input | Insert Max Length | All Lines"
+        "title": "End Of Line : Input : Insert Max Length : All Lines"
       },
       {
         "command": "EndOfLine.InsertMinIndentText",
-        "title": "End Of Line | Input | Insert Max Length | Text Lines"
+        "title": "End Of Line : Input : Insert Max Length : Text Lines"
       },
       {
         "command": "EndOfLine.DeleteEndText",
-        "title": "End Of Line | Input | Delete End Of Text"
+        "title": "End Of Line : Input : Delete End Of Text"
       },
       {
         "command": "EndOfLine.SelectEndLineAll",
-        "title": "End Of Line | Select Cursor | All Lines"
+        "title": "End Of Line : Select Cursor : All Lines"
       },
       {
         "command": "EndOfLine.SelectEndLineText",
-        "title": "End Of Line | Select Cursor | Text Lines"
+        "title": "End Of Line : Select Cursor : Text Lines"
       },
       {
         "command": "EndOfLine.SelectMaxLengthAll",
-        "title": "End Of Line | Select Cursor | Max Length | All Lines"
+        "title": "End Of Line : Select Cursor : Max Length : All Lines"
       },
       {
         "command": "EndOfLine.SelectMaxLengthText",
-        "title": "End Of Line | Select Cursor | Max Length | Text Lines"
+        "title": "End Of Line : Select Cursor : Max Length : Text Lines"
       },
       {
         "command": "EndOfLine.SelectFunction",
-        "title": "End Of Line | Select Function"
+        "title": "End Of Line : Select Function ..."
       }
     ],
     "configuration": {
