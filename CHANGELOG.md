@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.3.1] - 2024/09/05 Thu
+- Minor refactoring
+
 ## [2.3.0] - 2024/08/08 Thu
 - update README
 - add CHANGELOG.md

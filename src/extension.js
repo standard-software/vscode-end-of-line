@@ -59,22 +59,22 @@ function activate(context) {
   const mark = `>>`;
 
   registerCommand(`EndOfLine.SelectFunction`, () => { commandQuickPick([
-    [`Space`,                     `${mark}`,  () => { commandQuickPick([
+    [`Space`,                     mark,       () => { commandQuickPick([
       [`Fill Space`,              ``,         () => { mainSpace(`FillSpace`); }],
       [`Trim End`,                ``,         () => { mainSpace(`TrimEnd`); }],
     ], `End Of Line | Space`); }],
-    [`Input`,                     `${mark}`,  () => { commandQuickPick([
-      [`Insert End Of Line`,      `${mark}`,  () => { commandQuickPick([
+    [`Input`,                     mark,       () => { commandQuickPick([
+      [`Insert End Of Line`,      mark,       () => { commandQuickPick([
         [`All Lines`,             ``,         () => { mainInput(`InsertEndLineAll`); }],
         [`Text Lines`,            ``,         () => { mainInput(`InsertEndLineText`); }],
       ], `End Of Line | Input | Insert End Of Line`); }],
-      [`Insert Max Length`,       `${mark}`,  () => { commandQuickPick([
+      [`Insert Max Length`,       mark,       () => { commandQuickPick([
         [`All Lines`,             ``,         () => { mainInput(`InsertMaxLengthAll`); }],
         [`Text Lines`,            ``,         () => { mainInput(`InsertMaxLengthText`); }],
       ], `End Of Line | Input | Insert Max Length`); }],
       [`Delete End Of Text`,      ``,         () => { mainInput(`DeleteEndText`); }],
     ], `End Of Line | Input`); }],
-    [`Select Cursor`,             `${mark}`,  () => { commandQuickPick([
+    [`Select Cursor`,             mark,       () => { commandQuickPick([
       [`All Lines`,               ``,         () => { mainSelect(`SelectEndLineAll`); }],
       [`Text Lines`,              ``,         () => { mainSelect(`SelectEndLineText`); }],
       [`Max Length | All Lines`,  ``,         () => { mainSelect(`SelectMaxLengthAll`); }],
