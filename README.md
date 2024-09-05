@@ -11,6 +11,29 @@ This extension has the following functions
 - Deletes a character at the end of a line string.
 - Position the cursor at the end of a line.
 
+## Information 
+
+- 2024/09/05 Thu
+I have developed another extension similar to the following.
+
+- Line Space Fill Trim - Visual Studio Marketplace  
+https://marketplace.visualstudio.com/items?itemName=SatoshiYamamoto.vscode-line-space-fill-trim
+
+It may replace the functionality as follows. Please refer to it.
+
+- End Of Line : Space : Fill Space  
+➔ - Line Space : Fill To End : Select All Lines
+
+- End Of Line : Space : Trim End  
+➔ - Line Space : Trim End
+
+- End Of Line : Select Cursor : Max Length : All Lines  
+➔ - Line Space : Fill To End : Select All Lines
+
+- End Of Line : Select Cursor : Max Length : Text Lines  
+➔ - Line Space : Fill To End : Select Text Lines
+
+
 ## Install
 
 https://marketplace.visualstudio.com/items?itemName=SatoshiYamamoto.vscode-end-of-line
@@ -62,6 +85,22 @@ Or Select Function
 
 Max Length = End of line at maximum length of selection.  
 
+## operation
+
+The number of spaces to be filled is done according to the maximum number of characters in the selection.  
+The number of characters is obtained by graphemesplit.  
+
+[graphemesplit - npm](https://www.npmjs.com/package/graphemesplit)  
+Thanks to the author of graphemesplit.
+
+So Japanese and Chinese kanji characters are counted as two characters of the alphabet.  
+Pictograms are also counted as two characters of the alphabet, and pictograms that are combined into a single character are also counted as two characters of the alphabet.  
+
+- A = 1 character width
+- あ = 2 character width
+- 😊 = 2 character width
+- 👨‍👩‍👧‍👦 = 2 character width
+
 ## Setting
 
 settings.json
@@ -72,11 +111,11 @@ settings.json
 }
 ```
 
-## License
+## Contact
 
-Released under the [MIT License][license].
+Please contact me if you have any requests.
 
-## Change log
-
-[./CHANGELOG.md](./CHANGELOG.md)
+Satoshi Yamamoto  
+standard.software.net@gmail.com  
+Japanese / English
 
